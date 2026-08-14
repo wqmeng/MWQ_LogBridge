@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{EF7D3543-2240-4800-8CF9-76EB8D1D2028}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="LogBridge.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="TestQuickLoggerAdapter.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="LogBridge">
+        <MSBuild Projects="LogBridge.dproj"/>
+    </Target>
+    <Target Name="LogBridge:Clean">
+        <MSBuild Projects="LogBridge.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="LogBridge:Make">
+        <MSBuild Projects="LogBridge.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TestQuickLoggerAdapter">
+        <MSBuild Projects="TestQuickLoggerAdapter.dproj"/>
+    </Target>
+    <Target Name="TestQuickLoggerAdapter:Clean">
+        <MSBuild Projects="TestQuickLoggerAdapter.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestQuickLoggerAdapter:Make">
+        <MSBuild Projects="TestQuickLoggerAdapter.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="LogBridge;TestQuickLoggerAdapter"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="LogBridge:Clean;TestQuickLoggerAdapter:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="LogBridge:Make;TestQuickLoggerAdapter:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

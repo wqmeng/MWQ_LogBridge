@@ -1,0 +1,44 @@
+package LogBridge;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  Spring.Base,
+  QuickLogger_D12;
+
+contains
+  MWQ.LogBridge.ICommonLogger in '..\src\MWQ.LogBridge.ICommonLogger.pas',
+  MWQ.LogBridge.CommLoggerBase in '..\src\MWQ.LogBridge.CommLoggerBase.pas',
+  MWQ.LogBridge.ConsoleLogger in '..\src\MWQ.LogBridge.ConsoleLogger.pas',
+  MWQ.LogBridge.Log4DAdapter in '..\src\MWQ.LogBridge.Log4DAdapter.pas',
+  MWQ.LogBridge.QuickLoggerAdapter in '..\src\MWQ.LogBridge.QuickLoggerAdapter.pas',
+  MWQ.LogBridge in '..\src\MWQ.LogBridge.pas';
+
+end.
+
