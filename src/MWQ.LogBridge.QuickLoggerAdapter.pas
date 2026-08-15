@@ -79,6 +79,11 @@ end;
 procedure TQuickLoggerAdapter.SetLogFileName(const AFileName: string);
 begin
   inherited;
+  if AFileName = '' then
+  begin
+    GlobalLogFileProvider.Enabled := False;
+    Exit;
+  end;
   GlobalLogFileProvider.FileName := AFileName;
 end;
 
@@ -98,13 +103,15 @@ begin
   if loFile in ATypes then
   begin
     if FFileName <> '' then
-      GlobalLogFileProvider.FileName := FFileName // optionally configurable
-    else
-      GlobalLogFileProvider.FileName := 'quicklogger.log'; // optionally configurable
-    GlobalLogFileProvider.Enabled := True;
+    begin
+      GlobalLogFileProvider.FileName := FFileName;
+      GlobalLogFileProvider.Enabled := True;
 
-    if not Quick.Logger.Logger.Providers.Contains(GlobalLogFileProvider) then
-      Quick.Logger.Logger.Providers.add(GlobalLogFileProvider);
+      if not Quick.Logger.Logger.Providers.Contains(GlobalLogFileProvider) then
+        Quick.Logger.Logger.Providers.add(GlobalLogFileProvider);
+    end
+    else
+      GlobalLogFileProvider.Enabled := False;
   end;
 
   if loConsole in ATypes then
