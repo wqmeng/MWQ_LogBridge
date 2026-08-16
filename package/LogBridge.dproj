@@ -109,7 +109,6 @@
         <DCCReference Include="..\src\MWQ.LogBridge.ConsoleLogger.pas"/>
         <DCCReference Include="..\src\MWQ.LogBridge.Log4DAdapter.pas"/>
         <DCCReference Include="..\src\MWQ.LogBridge.QuickLoggerAdapter.pas"/>
-        <DCCReference Include="..\src\MWQ.LogBridge.QuickLoggerCompat.pas"/>
         <DCCReference Include="..\src\MWQ.LogBridge.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -153,7 +152,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\LogBridge.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\37.0\Bpl\LogBridge.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>LogBridge.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

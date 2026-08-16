@@ -52,6 +52,7 @@ type
     procedure SetEnable(const AValue: Boolean);
     procedure SetOutputTypes(const ATypes: TLogOutputTypes);
     procedure SetLogFileName(const AFileName: string);  // <-- Add this
+    procedure RotateLog;
   end;
 
   TLoggerFactoryFunc = reference to function: ICommonLogger;

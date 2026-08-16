@@ -7,6 +7,8 @@ uses
 
 type
   TQuickLoggerAdapter = class(TCommLoggerBase)
+  private
+    procedure RotateLog;
   protected
     function GetLoggerType: TLoggerType; override;
   public
@@ -47,32 +49,32 @@ begin
 
   case Level of
     ltInfo:
-      Quick.Logger.Log(Msg, TEventType.etInfo);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etInfo);
     ltDebug:
-      Quick.Logger.Log(Msg, TEventType.etDebug);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etDebug);
     ltWarn:
-      Quick.Logger.Log(Msg, TEventType.etWarning);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etWarning);
     ltError,
     ltFatal:
-      Quick.Logger.Log(Msg, TEventType.etError);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etError);
     ltException:
-      Quick.Logger.Log(Msg, TEventType.etException);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etException);
     ltHeader:
-      Quick.Logger.Log(Msg, TEventType.etHeader);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etHeader);
     ltSuccess:
-      Quick.Logger.Log(Msg, TEventType.etSuccess);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etSuccess);
     ltDone:
-      Quick.Logger.Log(Msg, TEventType.etDone);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etDone);
     ltCritical:
-      Quick.Logger.Log(Msg, TEventType.etCritical);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etCritical);
     ltTrace:
-      Quick.Logger.Log(Msg, TEventType.etTrace);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etTrace);
     ltCustom1:
-      Quick.Logger.Log(Msg, TEventType.etCustom1);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etCustom1);
     ltCustom2:
-      Quick.Logger.Log(Msg, TEventType.etCustom2);
+      Quick.Logger.Log(Msg, Quick.Logger.TEventType.etCustom2);
   else
-    Quick.Logger.Log(Msg, TEventType.etInfo);
+    Quick.Logger.Log(Msg, Quick.Logger.TEventType.etInfo);
   end;
 end;
 
@@ -85,6 +87,12 @@ begin
     Exit;
   end;
   GlobalLogFileProvider.FileName := AFileName;
+end;
+
+procedure TQuickLoggerAdapter.RotateLog;
+begin
+  if GlobalLogFileProvider.Enabled then
+    GlobalLogFileProvider.RotateLog;
 end;
 
 procedure TQuickLoggerAdapter.SetOutputTypes(const ATypes: TLogOutputTypes);

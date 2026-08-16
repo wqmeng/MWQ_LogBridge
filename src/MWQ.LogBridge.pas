@@ -7,6 +7,12 @@ uses
   Spring, Spring.Collections, Spring.Collections.Lists;
 
 type
+  TLoggerType = MWQ.LogBridge.ICommonLogger.TLoggerType;
+  TLogType = MWQ.LogBridge.ICommonLogger.TLogType;
+  TLogTypeMask = MWQ.LogBridge.ICommonLogger.TLogTypeMask;
+  TLogOutputType = MWQ.LogBridge.ICommonLogger.TLogOutputType;
+  TLogOutputTypes = MWQ.LogBridge.ICommonLogger.TLogOutputTypes;
+
   TLogBridge = class
   private
     class var FEnableLog: Boolean;
@@ -46,6 +52,7 @@ type
     function GetLogTypeMask: TLogTypeMask;
     procedure SetOutputTypes(const ATypes: TLogOutputTypes); virtual;
     procedure SetLogFileName(const AFileName: string); virtual;
+    procedure RotateLog; virtual;
     function GetOutputTypes: TLogOutputTypes;
 
     property LogFileName: string read FFileName;
@@ -54,8 +61,69 @@ type
     class property EnableLog: Boolean read FEnableLog write FEnableLog;
   end;
 
+  // Backend-independent aliases kept for source compatibility with existing
+  // callers. Their values are defined by TLogType, not by Quick.Logger.
+  TEventType = TLogType;
+  TLogLevel = set of TLogType;
+
+const
+  etHeader = ltHeader;
+  etInfo = ltInfo;
+  etSuccess = ltSuccess;
+  etWarning = ltWarn;
+  etError = ltError;
+  etCritical = ltCritical;
+  etException = ltException;
+  etDebug = ltDebug;
+  etTrace = ltTrace;
+  etDone = ltDone;
+  etCustom1 = ltCustom1;
+  etCustom2 = ltCustom2;
+
+  LOG_ONLYERRORS: TLogLevel = [ltHeader, ltInfo, ltError, ltCritical, ltException];
+  LOG_ERRORSANDWARNINGS: TLogLevel =
+    [ltHeader, ltInfo, ltWarn, ltError, ltCritical, ltException];
+  LOG_BASIC: TLogLevel = [ltInfo, ltSuccess, ltWarn, ltError, ltCritical, ltException];
+  LOG_ALL: TLogLevel =
+    [ltHeader, ltInfo, ltSuccess, ltDone, ltWarn, ltError, ltCritical,
+     ltException, ltCustom1, ltCustom2];
+  LOG_TRACE: TLogLevel =
+    [ltHeader, ltInfo, ltSuccess, ltDone, ltWarn, ltError, ltCritical,
+     ltException, ltTrace];
+  LOG_DEBUG: TLogLevel =
+    [ltHeader, ltInfo, ltSuccess, ltDone, ltWarn, ltError, ltCritical,
+     ltException, ltTrace, ltDebug];
+  LOG_VERBOSE: TLogLevel = [Low(TLogType)..High(TLogType)];
+
+const
+  lgtConsole = MWQ.LogBridge.ICommonLogger.lgtConsole;
+  lgtQuickLogger = MWQ.LogBridge.ICommonLogger.lgtQuickLogger;
+  lgtLog4D = MWQ.LogBridge.ICommonLogger.lgtLog4D;
+  lgtCustom1 = MWQ.LogBridge.ICommonLogger.lgtCustom1;
+  lgtCustom2 = MWQ.LogBridge.ICommonLogger.lgtCustom2;
+  lgtCustom3 = MWQ.LogBridge.ICommonLogger.lgtCustom3;
+
+  loFile = MWQ.LogBridge.ICommonLogger.loFile;
+  loMemory = MWQ.LogBridge.ICommonLogger.loMemory;
+  loMail = MWQ.LogBridge.ICommonLogger.loMail;
+  loSyslog = MWQ.LogBridge.ICommonLogger.loSyslog;
+  loEventlog = MWQ.LogBridge.ICommonLogger.loEventlog;
+  loConsole = MWQ.LogBridge.ICommonLogger.loConsole;
+  loIDEDebug = MWQ.LogBridge.ICommonLogger.loIDEDebug;
+  loStringList = MWQ.LogBridge.ICommonLogger.loStringList;
+  loCustom = MWQ.LogBridge.ICommonLogger.loCustom;
+
 var
   LogBridge: TLogBridge;
+
+function LogTypeFromEventType(const EventType: TEventType): TLogType; inline;
+function IsLogLevelEnabled(const EventType: TEventType): Boolean; inline;
+function LogTypeMaskFromEventLevel(const Levels: TLogLevel): TLogTypeMask;
+
+procedure Log(const Msg: string); overload;
+procedure Log(const Msg: string; const EventType: TEventType); overload;
+procedure Log(const MsgFmt: string; const Args: array of const;
+  const EventType: TEventType); overload;
 
 // Helpers support both an already-built message and deferred formatting:
 //   LBI('ready message');
@@ -119,6 +187,43 @@ begin
     LogBridge := TLogBridge.Create;
   end;
   Result := LogBridge;
+end;
+
+function LogTypeFromEventType(const EventType: TEventType): TLogType;
+begin
+  Result := EventType;
+end;
+
+function IsLogLevelEnabled(const EventType: TEventType): Boolean;
+begin
+  Result := Assigned(LogBridge) and
+    LogBridge.IsLevelEnabled(LogTypeFromEventType(EventType));
+end;
+
+function LogTypeMaskFromEventLevel(const Levels: TLogLevel): TLogTypeMask;
+var
+  Level: TLogType;
+begin
+  Result := 0;
+  for Level := Low(TLogType) to High(TLogType) do
+    if Level in Levels then
+      Result := Result or LogTypeToMask(Level);
+end;
+
+procedure Log(const Msg: string);
+begin
+  GlobalLogBridge.Log(ltInfo, Msg);
+end;
+
+procedure Log(const Msg: string; const EventType: TEventType);
+begin
+  GlobalLogBridge.Log(LogTypeFromEventType(EventType), Msg);
+end;
+
+procedure Log(const MsgFmt: string; const Args: array of const;
+  const EventType: TEventType);
+begin
+  GlobalLogBridge.Log(LogTypeFromEventType(EventType), MsgFmt, Args);
 end;
 
 { TLogBridge }
@@ -309,6 +414,14 @@ begin
     Logger.SetOutputTypes(ATypes);
 end;
 
+procedure TLogBridge.RotateLog;
+var
+  Logger: ICommonLogger;
+begin
+  for Logger in FTargets.Values do
+    Logger.RotateLog;
+end;
+
 procedure TLogBridge.Log(const Level: TLogType; const Msg: string; const ASessionID: Integer);
 var
   LoggerTypes: TArray<TLoggerType>;
@@ -327,7 +440,7 @@ begin
   else
   begin
     if FTargets.Count = 0 then
-      AddLogger(TConsoleLogger.Create('FallbackConsole'));
+      Exit;
 
     for Logger in FTargets.Values do
       Logger.Log(Level, Msg);

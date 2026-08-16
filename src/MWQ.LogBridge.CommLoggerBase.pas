@@ -28,6 +28,7 @@ type
     procedure SetEnable(const AValue: Boolean);
     procedure SetOutputTypes(const ATypes: TLogOutputTypes); virtual;
     procedure SetLogFileName(const AFileName: string); virtual;  // <-- Add this
+    procedure RotateLog; virtual;
 
     function IsLevelEnabled(const Level: TLogType): Boolean; virtual;
     function GetLogTypeMask: TLogTypeMask;
@@ -155,6 +156,10 @@ end;
 procedure TCommLoggerBase.SetLogFileName(const AFileName: string);
 begin
   FFileName := AFileName;
+end;
+
+procedure TCommLoggerBase.RotateLog;
+begin
 end;
 
 procedure TCommLoggerBase.SetOutputTypes(const ATypes: TLogOutputTypes);
