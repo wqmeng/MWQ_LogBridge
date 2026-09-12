@@ -9,12 +9,14 @@ type
   TQuickLoggerAdapter = class(TCommLoggerBase)
   private
     procedure RotateLog;
+    procedure ApplyLogTypeMaskToQuickLogger;
   protected
     function GetLoggerType: TLoggerType; override;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Log(const Level: TLogType; const Msg: string); override;
+    procedure SetLogTypeMask(const AMask: TLogTypeMask); override;
     procedure SetOutputTypes(const ATypes: TLogOutputTypes); override;
     procedure SetLogFileName(const AFileName: string); override;
   end;
@@ -180,9 +182,52 @@ begin
   // Other output types...
 
   // Optional: configure LogLevel on providers to match desired log levels
+  ApplyLogTypeMaskToQuickLogger;
 
   // You can skip loCustom — it's checked before calling Log
 
+end;
+
+procedure TQuickLoggerAdapter.ApplyLogTypeMaskToQuickLogger;
+var
+  LLevel: Quick.Logger.TLogLevel;
+  I: Integer;
+begin
+  LLevel := [];
+
+  if IsLevelEnabled(ltHeader) then
+    Include(LLevel, Quick.Logger.TEventType.etHeader);
+  if IsLevelEnabled(ltInfo) then
+    Include(LLevel, Quick.Logger.TEventType.etInfo);
+  if IsLevelEnabled(ltSuccess) then
+    Include(LLevel, Quick.Logger.TEventType.etSuccess);
+  if IsLevelEnabled(ltWarn) then
+    Include(LLevel, Quick.Logger.TEventType.etWarning);
+  if IsLevelEnabled(ltError) or IsLevelEnabled(ltFatal) then
+    Include(LLevel, Quick.Logger.TEventType.etError);
+  if IsLevelEnabled(ltCritical) then
+    Include(LLevel, Quick.Logger.TEventType.etCritical);
+  if IsLevelEnabled(ltException) then
+    Include(LLevel, Quick.Logger.TEventType.etException);
+  if IsLevelEnabled(ltDebug) then
+    Include(LLevel, Quick.Logger.TEventType.etDebug);
+  if IsLevelEnabled(ltTrace) then
+    Include(LLevel, Quick.Logger.TEventType.etTrace);
+  if IsLevelEnabled(ltDone) then
+    Include(LLevel, Quick.Logger.TEventType.etDone);
+  if IsLevelEnabled(ltCustom1) then
+    Include(LLevel, Quick.Logger.TEventType.etCustom1);
+  if IsLevelEnabled(ltCustom2) then
+    Include(LLevel, Quick.Logger.TEventType.etCustom2);
+
+  for I := 0 to Quick.Logger.Logger.Providers.Count - 1 do
+    TLogProviderBase(Quick.Logger.Logger.Providers[I]).LogLevel := LLevel;
+end;
+
+procedure TQuickLoggerAdapter.SetLogTypeMask(const AMask: TLogTypeMask);
+begin
+  inherited SetLogTypeMask(AMask);
+  ApplyLogTypeMaskToQuickLogger;
 end;
 
 procedure RegisterQuickLoggerAdapter;
