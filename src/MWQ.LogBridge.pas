@@ -24,36 +24,36 @@ type
     FOutputTypes: TLogOutputTypes;
     FLogTypeMask: TLogTypeMask;
     FFileName: String;
-    function LogTypeToStr(const Level: TLogType): string;
+    function LogTypeToStr(const Level: TLogType): string; inline;
   public
     constructor Create;
     destructor Destroy; override;
 
     procedure RegisterAdapter(const LoggerType: TLoggerType;
-      const Factory: TLoggerFactoryFunc);
-    procedure AddLogger(const Logger: ICommonLogger);
-    procedure RemoveLogger(const Logger: ICommonLogger);
-    procedure UseDefaultLogger;
-    procedure UseConsoleOnly;
-    function UseLogger(const ALoggers: TArray<TLoggerType>): Integer;
-    procedure ClearLogger; // ✅ remove extra ()
+      const Factory: TLoggerFactoryFunc); inline;
+    procedure AddLogger(const Logger: ICommonLogger); inline;
+    procedure RemoveLogger(const Logger: ICommonLogger); inline;
+    procedure UseDefaultLogger; inline;
+    procedure UseConsoleOnly; inline;
+    function UseLogger(const ALoggers: TArray<TLoggerType>): Integer; inline;
+    procedure ClearLogger; inline; // ✅ remove extra ()
 
     function GetOrCreateAdapter(const LoggerType: TLoggerType): ICommonLogger;
 
-    procedure Log(const Level: TLogType; const Msg: string); overload; virtual;
-    procedure Log(const Level: TLogType; const MsgFmt: string; const Args: array of const); overload; virtual;
+    procedure Log(const Level: TLogType; const Msg: string); overload; inline;
+    procedure Log(const Level: TLogType; const MsgFmt: string; const Args: array of const); overload;
     procedure Log(const Level: TLogType; const MsgFmt: string;
-      const Args: array of const; const ASessionID: Integer); overload; virtual;
-    procedure Log(const Level: TLogType; const Msg: string; const ASessionID: Integer); overload; virtual;
+      const Args: array of const; const ASessionID: Integer); overload;
+    procedure Log(const Level: TLogType; const Msg: string; const ASessionID: Integer); overload; inline;
     function IsLevelEnabled(const Level: TLogType): Boolean; inline;
 
-    procedure SetEnable(const AValue: Boolean);
-    procedure SetLogTypeMask(const AMask: TLogTypeMask); virtual;
-    function GetLogTypeMask: TLogTypeMask;
-    procedure SetOutputTypes(const ATypes: TLogOutputTypes); virtual;
-    procedure SetLogFileName(const AFileName: string); virtual;
-    procedure RotateLog; virtual;
-    function GetOutputTypes: TLogOutputTypes;
+    procedure SetEnable(const AValue: Boolean); inline;
+    procedure SetLogTypeMask(const AMask: TLogTypeMask); inline;
+    function GetLogTypeMask: TLogTypeMask; inline;
+    procedure SetOutputTypes(const ATypes: TLogOutputTypes); inline;
+    procedure SetLogFileName(const AFileName: string); inline;
+    procedure RotateLog; inline;
+    function GetOutputTypes: TLogOutputTypes; inline;
 
     property LogFileName: string read FFileName;
 
@@ -120,8 +120,8 @@ function LogTypeFromEventType(const EventType: TEventType): TLogType; inline;
 function IsLogLevelEnabled(const EventType: TEventType): Boolean; inline;
 function LogTypeMaskFromEventLevel(const Levels: TLogLevel): TLogTypeMask;
 
-procedure Log(const Msg: string); overload;
-procedure Log(const Msg: string; const EventType: TEventType); overload;
+procedure Log(const Msg: string); overload; inline;
+procedure Log(const Msg: string; const EventType: TEventType); overload; inline;
 procedure Log(const MsgFmt: string; const Args: array of const;
   const EventType: TEventType); overload;
 
