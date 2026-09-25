@@ -38,6 +38,7 @@ contains
   MWQ.LogBridge.ConsoleLogger in '..\src\MWQ.LogBridge.ConsoleLogger.pas',
   MWQ.LogBridge.Log4DAdapter in '..\src\MWQ.LogBridge.Log4DAdapter.pas',
   MWQ.LogBridge.QuickLoggerAdapter in '..\src\MWQ.LogBridge.QuickLoggerAdapter.pas',
+  MWQ.LogBridge.LockDiagnostics in '..\src\MWQ.LogBridge.LockDiagnostics.pas',
   MWQ.LogBridge in '..\src\MWQ.LogBridge.pas';
 
 end.

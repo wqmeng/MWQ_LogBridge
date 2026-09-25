@@ -109,6 +109,7 @@
         <DCCReference Include="..\src\MWQ.LogBridge.ConsoleLogger.pas"/>
         <DCCReference Include="..\src\MWQ.LogBridge.Log4DAdapter.pas"/>
         <DCCReference Include="..\src\MWQ.LogBridge.QuickLoggerAdapter.pas"/>
+        <DCCReference Include="..\src\MWQ.LogBridge.LockDiagnostics.pas"/>
         <DCCReference Include="..\src\MWQ.LogBridge.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
